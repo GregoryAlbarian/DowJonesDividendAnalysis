@@ -1,14 +1,11 @@
 # line 3 to 11 I learned about on stack overflow
 # it should upload ggplot2 if you don't have it already
-list.of.packages <- c("ggplot2")
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-# If you don't have ggplot2 and it downloaded it for you then you should probably restart R
 
-# same with rVest (a web scraping package)
-list.of.packages <- c("rvest")
+list.of.packages <- c("ggplot2", "rvest")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
+# If you don't have ggplot2 or rvest and it downloaded
+# it for you then you should probably restart R
 
 # using these libraries
 library(ggplot2)
@@ -41,11 +38,13 @@ ticker_symbols <- dividend_table[,1]
 
 # congjoined data will be filled up late in the for loop
 conjoined_data <- data.frame(symbols = c(), volumes = c(), dividends = c())
+file_names <- paste("stock_volumes/",ticker_symbols,".csv",sep = "")
 
 iteration_amount <- seq(1:30)
 for (iteration in iteration_amount) {
-  file_names <- paste("stock_volumes/",ticker_symbols,".csv",sep = "")
   stock <-read.csv(file_names[iteration])
+  
+  # grabbing just 2018 data
   volume <- stock[974:1224, 6]
   average_volume <- mean(volume)
   
