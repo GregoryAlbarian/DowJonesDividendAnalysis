@@ -45,9 +45,10 @@ for (iteration in iteration_amount) {
   stock <-read.csv(file_names[iteration])
   
   # grabbing just 2018 data
+  #stop hardoding this part****************************************
   volume <- stock[974:1224, 6]
   average_volume <- mean(volume)
-  
+  #************************************get rid of rbind pre allocate memory instead
   temp_data <- data.frame(ticker_symbols[iteration], average_volume, dividend_table$Yield[iteration])
   conjoined_data <- rbind(conjoined_data, temp_data)
 }
@@ -58,10 +59,9 @@ conjoined_data$ratio <- conjoined_data$average_volume / conjoined_data$dividends
 conjoined_data
 
 # graph
-graph<-ggplot(conjoined_data, aes(x=conjoined_data$average_volume, y=conjoined_data$dividends))
-graph_title <- "The way the dividend effect the average stock in each company in the Dow Jones "
-graph_title <- paste(graph_title, "Industrial Average (DOW) for 2018")
+graph<-ggplot(conjoined_data, aes(x=average_volume, y=dividends))
+graph_title <- "      dividends vs. average stock volume in the DOW"
 graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
 graph <- graph + geom_point(colour="blue")
-graph <- graph + geom_smooth(model="lm", color = "red")
+graph <- graph + geom_smooth(model="lm", method = "loess", color = "red", formula = y~x)
 graph
