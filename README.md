@@ -3,8 +3,10 @@ The purpose of the data being analyzed is to find a relationship between a divid
 
 Dividend is the amount that a stocks pays the investor for holding it. The dividend can change over time. The volume is the amount of times the stock is bought or sold on a given day.
 
-In this program, I am surprised to see that stocks with higher dividends are traded more often. This is because higher dividend stocks can be looked at as a safer investment. This is because some retired individuals can use the dividends they normally get for their expenses.
-
+In this program, I am surprised to see that stocks with higher dividends are traded more often. This is because higher dividend stocks can be looked at as a safer investment. This is because some retired individuals can use the dividends they normally get for their expenses.  
+  
+The stock volumes I found on Kaggle and I got the dividend by web scraping.  
+  
 __This program needs an internet connection to run because there is web scraping involved.__
 
 ### Sources:
