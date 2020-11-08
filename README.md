@@ -1,6 +1,6 @@
 # DowJonesDividendAnalysis
-The purpose of the data being analyzed is to find a relationship between a dividend and a volume of each particular stock. I am using the Dow Jones Industrial Average (DOW) because it is considered a good representation of hte entire US stock market. The program will so far use an lm model.
-
+The purpose of the data being analyzed is to find a relationship between a dividend and a volume of each particular stock. I am using the Dow Jones Industrial Average (DOW) because it is considered a good representation of hte entire US stock market.  
+  
 Dividend is the amount that a stocks pays the investor for holding it. The dividend can change over time. The volume is the amount of times the stock is bought or sold on a given day.
 
 In this program, I am surprised to see that stocks with higher dividends are traded more often. This is because higher dividend stocks can be looked at as a safer investment. This is because some retired individuals can use the dividends they normally get for their expenses.  
