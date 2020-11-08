@@ -63,7 +63,7 @@ conjoined_data$ratio <- conjoined_data$average_volume / dividend_table$Yield
 
 # graph
 graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
-graph_title <- "                            average stock volume vs. dividends in the DOW"
+graph_title <- "average stock volume vs. dividends in the DOW"
 graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
 graph <- graph + geom_point(colour="blue")
 graph <- graph + geom_smooth(method = "loess", color = "red", formula = y~x)
