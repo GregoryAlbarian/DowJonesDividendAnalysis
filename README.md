@@ -7,7 +7,7 @@ In this program, I am surprised to see that stocks with higher dividends are tra
   
 The stock volumes I found on Kaggle and I got the dividend by web scraping.  
 click [here](https://www.kaggle.com/timoboz/stock-data-dow-jones?select=AAPL.csv) to go to that page on Kaggle  
-click [here]("https://www.reinisfischer.com/dow-jones-companies-yield-2018") to go to the webpage I web scraped
+click [here](https://www.reinisfischer.com/dow-jones-companies-yield-2018) to go to the webpage I web scraped
   
 __This program needs an internet connection to run because there is web scraping involved.__
 
