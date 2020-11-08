@@ -19,4 +19,10 @@ https://www.youtube.com/watch?v=DDmUPI8oXco
 https://stackoverflow.com/questions/11433432/how-to-import-multiple-csv-files-at-once/11433532#11433532  
 https://www.rdocumentation.org/packages/utils/versions/3.6.2/topics/read.table  
 https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf  
+https://www.datanovia.com/en/blog/how-to-save-a-ggplot/  
+https://stat.ethz.ch/R-manual/R-devel/library/base/html/grep.html  
+https://www.neonscience.org/grepl-filter-piping-dplyr-r  
+https://www.youtube.com/watch?v=yrVhA8GXvrc  
+https://www.rdocumentation.org/packages/dplyr/versions/0.7.8
+
 
