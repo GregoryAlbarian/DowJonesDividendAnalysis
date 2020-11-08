@@ -1,7 +1,8 @@
-# line 3 to 11 I learned about on stack overflow
+# DowJonesDividendAnalysis.r
+# line 4 through 6 I learned about on stack overflow
 # it should upload ggplot2 if you don't have it already
 
-list.of.packages <- c("ggplot2", "rvest")
+list.of.packages <- c("ggplot2", "rvest", "data.table", "dplyr")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 # If you don't have ggplot2 or rvest and it downloaded
@@ -10,6 +11,8 @@ if(length(new.packages)) install.packages(new.packages)
 # using these libraries
 library(ggplot2)
 library(rvest)
+library(data.table)
+library(dplyr)
 # this program also requires a stable internet
 # connection to work and scrape appropriate data
 
@@ -37,31 +40,35 @@ ticker_symbols <- dividend_table[,1]
 # getting volumes for each stock
 
 # congjoined data will be filled up late in the for loop
-conjoined_data <- data.frame(symbols = c(), volumes = c(), dividends = c())
 file_names <- paste("stock_volumes/",ticker_symbols,".csv",sep = "")
 
-iteration_amount <- seq(1:30)
-for (iteration in iteration_amount) {
-  stock <-read.csv(file_names[iteration])
+# preallocating memory for a dataframe
+conjoined_data <- data.table(symbol = LETTERS[1:30],average_volume=seq(.1,3,by=.1),dividends = seq(.1,3,by=.1),ratio = seq(.1,3,by=.1))
+for (iteration in seq(1:30)) {
   
+  stock <- fread(file_names[iteration])
   # grabbing just 2018 data
-  #stop hardoding this part****************************************
-  volume <- stock[974:1224, 6]
-  average_volume <- mean(volume)
-  #************************************get rid of rbind pre allocate memory instead
-  temp_data <- data.frame(ticker_symbols[iteration], average_volume, dividend_table$Yield[iteration])
-  conjoined_data <- rbind(conjoined_data, temp_data)
+  stock <- filter(stock, grepl("2018", date))
+  volume <- select(stock, volume)
+
+  average_volume <- mean(volume[[1]])
+  conjoined_data[iteration,1] <- ticker_symbols[iteration]
+  conjoined_data[iteration,2] <- average_volume
+  conjoined_data[iteration,3] <- dividend_table$Yield[iteration]
+  
 }
 
-colnames(conjoined_data) <- c("symbol", "average_volume", "dividends")
 # ratio look at the similarity between volume and dividend
-conjoined_data$ratio <- conjoined_data$average_volume / conjoined_data$dividends
-conjoined_data
+conjoined_data$ratio <- conjoined_data$average_volume / dividend_table$Yield
 
 # graph
-graph<-ggplot(conjoined_data, aes(x=average_volume, y=dividends))
-graph_title <- "      dividends vs. average stock volume in the DOW"
+graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
+graph_title <- "                            average stock volume vs. dividends in the DOW"
 graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
 graph <- graph + geom_point(colour="blue")
-graph <- graph + geom_smooth(model="lm", method = "loess", color = "red", formula = y~x)
+graph <- graph + geom_smooth(method = "loess", color = "red", formula = y~x)
 graph
+pdf("dividends vs. average stock volume in the DOW.pdf")
+print(graph)
+dev.off()
+conjoined_data
