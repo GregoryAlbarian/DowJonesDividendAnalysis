@@ -72,3 +72,6 @@ pdf("dividends vs. average stock volume in the DOW.pdf")
 print(graph)
 dev.off()
 conjoined_data
+
+cor(conjoined_data$average_volume, conjoined_data$dividends)
+# correlation is extremely low learned how to use the correlation function
