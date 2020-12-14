@@ -2,7 +2,7 @@
 # line 4 through 6 I learned about on stack overflow
 # it should upload ggplot2 if you don't have it already
 
-list.of.packages <- c("ggplot2", "rvest", "data.table", "dplyr")
+list.of.packages <- c("ggplot2", "rvest", "data.table", "dplyr", "filesstrings")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 # If you don't have ggplot2 or rvest and it downloaded
@@ -13,6 +13,7 @@ library(ggplot2)
 library(rvest)
 library(data.table)
 library(dplyr)
+library(filesstrings)
 # this program also requires a stable internet
 # connection to work and scrape appropriate data
 
@@ -28,7 +29,7 @@ colnames(dividend_table) <- dividend_table[1, ]
 dividend_table <- dividend_table[-1 , ]
 row.names(dividend_table) <- 1:nrow(dividend_table)
 
-#type casting the percentages into numbers and decimals
+# type casting the percentages into numbers and decimals
 # taking off percentage signs
 dividend_table$Yield <- substr(dividend_table$Yield,1,nchar(dividend_table$Yield)-1)
 dividend_table$Yield <- as.numeric(dividend_table$Yield)
@@ -43,6 +44,7 @@ ticker_symbols <- dividend_table[,1]
 file_names <- paste("stock_volumes/",ticker_symbols,".csv",sep = "")
 
 # preallocating memory for a dataframe
+
 conjoined_data <- data.table(symbol = LETTERS[1:30],average_volume=seq(.1,3,by=.1),dividends = seq(.1,3,by=.1),ratio = seq(.1,3,by=.1))
 for (iteration in seq(1:30)) {
   
@@ -66,12 +68,36 @@ graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
 graph_title <- "average stock volume vs. dividends in the DOW"
 graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
 graph <- graph + geom_point(colour="blue")
-graph <- graph + geom_smooth(method = "loess", color = "red", formula = y~x)
+graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ poly(x,2))
 graph
 pdf("dividends vs. average stock volume in the DOW.pdf")
 print(graph)
 dev.off()
 conjoined_data
 
-cor(conjoined_data$average_volume, conjoined_data$dividends)
-# correlation is extremely low learned how to use the correlation function
+correlation <- cor(conjoined_data$average_volume, conjoined_data$dividends)
+correlation
+# correlation is extremely low
+# check asterisk*****************************
+
+# fixing directories
+if (!dir.exists("./results")) {
+  dir.create("./results")
+  #move graph file
+  source_path <- "./dividends vs. average stock volume in the DOW.pdf"
+  destination_path <- "./results/"
+  file.move(source_path, destination_path)
+  
+}
+
+# turn data table into its own file
+if (!file.exists("./ratio data and plotted points.txt")) {
+  write.table(conjoined_data, "./ratio data and plotted points.txt", sep="\t")
+  file.move("./ratio data and plotted points.txt", "./results")
+  
+}
+if (!file.exists("./correlation.txt")) {
+  write.table(correlation, "./correlation.txt", sep="\t")
+  file.move("./correlation.txt", "./results")
+  
+}
