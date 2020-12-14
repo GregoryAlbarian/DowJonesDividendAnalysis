@@ -25,6 +25,7 @@ https://www.datanovia.com/en/blog/how-to-save-a-ggplot/
 https://stat.ethz.ch/R-manual/R-devel/library/base/html/grep.html  
 https://www.neonscience.org/grepl-filter-piping-dplyr-r  
 https://www.youtube.com/watch?v=yrVhA8GXvrc  
-https://www.rdocumentation.org/packages/dplyr/versions/0.7.8
-
-
+https://www.rdocumentation.org/packages/dplyr/versions/0.7.8  
+https://stackoverflow.com/questions/24201222/compute-correlation-in-r-between-two-columns-from-different-data-frame  
+http://theautomatic.net/2018/07/11/manipulate-files-r/  
+https://www.statmethods.net/input/exportingdata.html  
