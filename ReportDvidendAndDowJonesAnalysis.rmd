@@ -1,0 +1,131 @@
+---
+title: "Analyzing the Relationship Between Dividends and Volumes in the Dow Jones Industrial Average (DJIA)"
+author: "Gregory Albarian"
+date: "December 14, 2020"
+output: html_document
+---
+
+## Background Information
+The public stock market can help people finance their money by taking a small partial ownership in the company. As the company makes more money, they can sell the stock for more money or buy at a higher price. Sometimes inflation hits, and stocks go up because the overall prices from a certain product goes up. Sometimes there is a recession involving high unemployment or low wages which will mean people may sell stock to cover costs or buy while it is still low. People might not have money to buy the stocks either. As stocks go up and down companies must incentivize investors to take on these risks.
+
+Thirty stocks are known to be a part of the Dow Jones Industrial Average (DJIA). The DJIA is considered a good representation of the American stock market. This program will use data from 2018 mainly because it was easily accessible. In 2018, the thirty stocks the DJIA composed of were Verizon, IBM, ExxonMobil, Chevron, Proctor & Gamble, Coca-Cola, Pfizer, JPMorgan Chase, Cisco Systems, McDonald's, Merck & Company, 3M, Johnson & Johnson, Intel, DowDuPont, Travelers, Caterpillar, Walgreens Boots Alliance, United Technologies, Walmart, The Home Depot, The Boeing Company, Microsoft, American Express, Goldman Sachs, Walt Disney Company, UnitedHealth Group, Apple, Nike, and Visa. Some companies pay dividends. This is money the company give throughout periods to its stockholders. The longer the investor stays with the company the more opportunity they must make with dividends. Companies can change their dividends at any time. One reason an investor likes dividends is it can give them money from the stocks without having to sell it. All companies in the DJIA pay dividends. On the other hand, if a company needs to pay a large dividend it may need to give it to keep investors because it is not expecting much in growth. The volume of the stock is how many times this is bought or sold on each trading day. The downside of this statistic is it may be difficult to know whether it is being bought or sold. Also, whether it is being bought or sold by a financial institution or individual investor. This data could be interesting, however it could not be found.
+
+## Question:
+Is there a relationship between a stock's average volume and dividend in the DJIA in 2018? 
+
+## Methods:
+
+The stock volumes were provided by [Kaggle an open-source data site](https://www.kaggle.com/timoboz/stock-data-dow-jones?select=AAPL.csv). The dividends were provided by a web scraping a [website](https://www.reinisfischer.com/dow-jones-companies-yield-2018). While the web scraping could be very time consuming it was difficult to find anywhere else.
+The program was written an R to do the data cleaning and analysis. The average volumes of each stock were used. Each stock was contained within its own directory. This data was extracted and used only 2018 data. This was later converted into an easy-to-read data table with average volumes, dividends, and finding the ratio.
+
+One important library used in this R script was [ggplot2](https://ggplot2.tidyverse.org/reference/geom_smooth.html). This library is used to do data visualizations. In the documentation for ggplot2, it says to use the loess method due to having less than 1,000 observations. The loess method is used because the DJIA only has thirty stocks in it.
+The Loess Method is regression method that was learned about to better understand what the program was doing. The Loess Method is very similar to a weighted least squares regression. It goes to each point and finds a subset of the points that are the closest to it. Each subset gets its own weighted least squares regression where the point that is currently being checked the next weights are assigned by how close they are to the original point. The Loess Method does this for each point. For closeness, is only measured in the x direction and not by a Euclidean Distance. When the Loess Method is at a certain point, there creates a new point of where that part of the weighted least squares regression is also at that same x value. For example, if the method is finding the value closest to the points where x = 2 and y = 3, and it takes from the nearby points and to create a weighted least squares regression where y = 4 at x = 2. Then (2,4) becomes a new used value. It goes through for all the points and all the new points until a smooth point is created (Cohen, 1999). The weighted least squares can be parabolic or linear. The R script created tried out both graphs. It also found the correlation.
+
+
+## Results:
+```{r include=FALSE}
+list.of.packages <- c("ggplot2", "rvest", "data.table", "dplyr", "filesstrings")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+# If you don't have ggplot2 or rvest and it downloaded
+# it for you then you should probably restart R
+
+# using these libraries
+library(ggplot2)
+library(rvest)
+library(data.table)
+library(dplyr)
+library(filesstrings)
+# this program also requires a stable internet
+# connection to work and scrape appropriate data
+
+# importing in my data
+
+# I am putting in the average dividend from scraping the internet
+url <- "https://www.reinisfischer.com/dow-jones-companies-yield-2018"
+dividend_table <- html_table(read_html(url))[[1]]
+dividend_table <- dividend_table[c(2,4)]
+
+# cleaning the table header
+colnames(dividend_table) <- dividend_table[1, ]
+dividend_table <- dividend_table[-1 , ]
+row.names(dividend_table) <- 1:nrow(dividend_table)
+
+# type casting the percentages into numbers and decimals
+# taking off percentage signs
+dividend_table$Yield <- substr(dividend_table$Yield,1,nchar(dividend_table$Yield)-1)
+dividend_table$Yield <- as.numeric(dividend_table$Yield)
+# yield is still stored as a percentage for later calculations
+
+# ticker symbols used maybe need
+ticker_symbols <- dividend_table[,1]
+
+# getting volumes for each stock
+
+# congjoined data will be filled up late in the for loop
+file_names <- paste("stock_volumes/",ticker_symbols,".csv",sep = "")
+
+# preallocating memory for a dataframe
+
+conjoined_data <- data.table(symbol = LETTERS[1:30],average_volume=seq(.1,3,by=.1),dividends = seq(.1,3,by=.1),ratio = seq(.1,3,by=.1))
+for (iteration in seq(1:30)) {
+  
+  stock <- fread(file_names[iteration])
+  # grabbing just 2018 data
+  stock <- filter(stock, grepl("2018", date))
+  volume <- select(stock, volume)
+
+  average_volume <- mean(volume[[1]])
+  conjoined_data[iteration,1] <- ticker_symbols[iteration]
+  conjoined_data[iteration,2] <- average_volume
+  conjoined_data[iteration,3] <- dividend_table$Yield[iteration]
+  
+}
+
+# ratio look at the similarity between volume and dividend
+conjoined_data$ratio <- conjoined_data$average_volume / dividend_table$Yield
+
+```
+
+#### graph for y = x for each weighted squares analysis within the Loess Method
+```{r}
+# graph
+graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
+graph_title <- "average stock volume vs. dividends in the DOW with y = x loess method"
+graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
+graph <- graph + geom_point(colour="blue")
+graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ x)
+print(graph)
+```
+
+#### graph for y = x^2 for each weighted squares analysis within the Loess Method
+```{r}
+graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
+graph_title <- "average stock volume vs. dividends in the DOW with y = x^2 loess method"
+graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
+graph <- graph + geom_point(colour="blue")
+graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ poly(x,2))
+print(graph)
+```
+### points on graph
+```{r}
+conjoined_data
+```
+dividends are display as a percent
+#### correlation between dividends and average volumes
+```{r}
+correlation <- cor(conjoined_data$average_volume, conjoined_data$dividends)
+correlation
+```
+
+## Conclusion:
+The correlation between stock dividends and volumes was extremely low. While the parabolic graph may look like it fits the data better this could still be overfitting the data. This high volume could be due in stock dividends what are known as ex-dividend dates. The ex-date is the latest an investor can buy the stock and still get the dividend. I could not find this data either for when the ex-dates were for 2018 in these stock dividends. Some investors can buy exactly at the ex-date and sell once they get the dividend for what could possibly be a quick payoff. However, this technique may not work if the stock fall more than it can pay in dividends.
+
+\newpage
+## Bibliography
+```
+Cohen, R. A. (1999, April). An introduction to PROC LOESS for local regression. In Proceedings of the twenty-fourth annual SAS users group international conference, Paper (Vol. 273).
+
+```{r include=FALSE}
+# I used Google Scholar for my citations
+```
