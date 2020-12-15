@@ -71,7 +71,6 @@ graph <- graph + geom_point(colour="blue")
 graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ x)
 graph
 pdf("dividends vs. average stock volume in the DOW y = x loess method.pdf")
-print(graph)
 dev.off()
 
 # fixing directories
@@ -91,7 +90,6 @@ graph <- graph + geom_point(colour="blue")
 graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ poly(x,2))
 graph
 pdf("dividends vs. average stock volume in the DOW y = x^2 loess method.pdf")
-print(graph)
 dev.off()
 
 #move graph file
