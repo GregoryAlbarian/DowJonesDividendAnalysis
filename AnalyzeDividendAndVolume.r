@@ -65,30 +65,40 @@ conjoined_data$ratio <- conjoined_data$average_volume / dividend_table$Yield
 
 # graph
 graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
-graph_title <- "average stock volume vs. dividends in the DOW"
+graph_title <- "average stock volume vs. dividends in the DOW with y = x loess method"
 graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
 graph <- graph + geom_point(colour="blue")
-graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ poly(x,2))
+graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ x)
 graph
-pdf("dividends vs. average stock volume in the DOW.pdf")
+pdf("dividends vs. average stock volume in the DOW y = x loess method.pdf")
 print(graph)
 dev.off()
-conjoined_data
-
-correlation <- cor(conjoined_data$average_volume, conjoined_data$dividends)
-correlation
-# correlation is extremely low
-# check asterisk*****************************
 
 # fixing directories
 if (!dir.exists("./results")) {
   dir.create("./results")
   #move graph file
-  source_path <- "./dividends vs. average stock volume in the DOW.pdf"
+  source_path <- "./dividends vs. average stock volume in the DOW y = x loess method.pdf"
   destination_path <- "./results/"
   file.move(source_path, destination_path)
-  
 }
+
+# creating another graph
+graph<-ggplot(conjoined_data, aes(x=dividends, y=average_volume))
+graph_title <- "average stock volume vs. dividends in the DOW with y = x^2 loess method"
+graph <- graph + labs(title = graph_title, x = "dividend (%)", y = "average volume")
+graph <- graph + geom_point(colour="blue")
+graph <- graph + geom_smooth(method = "loess", color = "red", formula = y ~ poly(x,2))
+graph
+pdf("dividends vs. average stock volume in the DOW y = x^2 loess method.pdf")
+print(graph)
+dev.off()
+
+#move graph file
+source_path <- "./dividends vs. average stock volume in the DOW y = x^2 loess method.pdf"
+destination_path <- "./results/"
+file.move(source_path, destination_path)
+
 
 # turn data table into its own file
 if (!file.exists("./ratio data and plotted points.txt")) {
@@ -99,5 +109,10 @@ if (!file.exists("./ratio data and plotted points.txt")) {
 if (!file.exists("./correlation.txt")) {
   write.table(correlation, "./correlation.txt", sep="\t")
   file.move("./correlation.txt", "./results")
-  
 }
+
+conjoined_data
+
+correlation <- cor(conjoined_data$average_volume, conjoined_data$dividends)
+correlation
+# correlation is extremely low
