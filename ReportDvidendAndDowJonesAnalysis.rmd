@@ -1,8 +1,12 @@
 ---
-title: "Analyzing the Relationship Between Dividends and Volumes in the Dow Jones Industrial Average (DJIA)"
+title: Analyzing the Relationship Between Dividends and Volumes in the Dow Jones Industrial
+  Average (DJIA)
 author: "Gregory Albarian"
 date: "December 14, 2020"
-output: html_document
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
 ---
 
 ## Background Information
@@ -123,7 +127,6 @@ The correlation between stock dividends and volumes was extremely low. While the
 
 \newpage
 ## Bibliography
-```
 Cohen, R. A. (1999, April). An introduction to PROC LOESS for local regression. In Proceedings of the twenty-fourth annual SAS users group international conference, Paper (Vol. 273).
 
 ```{r include=FALSE}
